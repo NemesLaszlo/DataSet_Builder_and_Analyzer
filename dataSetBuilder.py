@@ -391,6 +391,114 @@ class DataSetScrape:
 
         return durga_puja
 
+    def breakfast(self):
+        url = 'https://food.ndtv.com/recipes/breakfast-recipes'
+
+        data = requests.get(url)
+
+        soup = BeautifulSoup(data.content, 'html.parser')
+
+        s = soup.findAll('img', {'class': 'lazy'})
+
+        l = []
+
+        for i in s:
+            i = str(i)
+            t = i.split('title')
+            name = t[-1].split('width')[0]
+            name = name[2:-8]
+            l.append(name)
+        nl = l[-21:]
+        ll = []
+        for i in nl:
+            ll.append(i[:-6])
+
+        l = l[:-21] + ll
+
+        breakfast = pd.DataFrame(columns=['Name', 'sub_catagory', 'description'])
+
+        breakfast['Name'] = l
+
+        catagory = ['breakfast' for i in range(len(l))]
+
+        breakfast['sub_catagory'] = catagory
+
+        breakfast['description'] = self.description(url)
+
+        return breakfast
+
+    def dinner(self):
+        url = 'https://food.ndtv.com/recipes/dinner-party-recipes'
+
+        data = requests.get(url)
+
+        soup = BeautifulSoup(data.content, 'html.parser')
+
+        s = soup.findAll('img', {'class': 'lazy'})
+
+        l = []
+
+        for i in s:
+            i = str(i)
+            t = i.split('title')
+            name = t[-1].split('width')[0]
+            name = name[2:-8]
+            l.append(name)
+        nl = l[-21:]
+        ll = []
+        for i in nl:
+            ll.append(i[:-6])
+
+        l = l[:-21] + ll
+
+        dinner = pd.DataFrame(columns=['Name', 'sub_catagory', 'description'])
+
+        dinner['Name'] = l
+
+        catagory = ['dinner' for i in range(len(l))]
+
+        dinner['sub_catagory'] = catagory
+
+        dinner['description'] = self.description(url)
+
+        return dinner
+
+    def kids(self):
+        url = 'https://food.ndtv.com/recipes/kids-recipes'
+
+        data = requests.get(url)
+
+        soup = BeautifulSoup(data.content, 'html.parser')
+
+        s = soup.findAll('img', {'class': 'lazy'})
+
+        l = []
+
+        for i in s:
+            i = str(i)
+            t = i.split('title')
+            name = t[-1].split('width')[0]
+            name = name[2:-8]
+            l.append(name)
+        nl = l[-21:]
+        ll = []
+        for i in nl:
+            ll.append(i[:-6])
+
+        l = l[:-21] + ll
+
+        kids = pd.DataFrame(columns=['Name', 'sub_catagory', 'description'])
+
+        kids['Name'] = l
+
+        catagory = ['kids' for i in range(len(l))]
+
+        kids['sub_catagory'] = catagory
+
+        kids['description'] = self.description(url)
+
+        return kids
+
     def basic_data_build(self):
         df = pd.concat([self.healthy(), self.snacks()], ignore_index=True)
 
@@ -451,4 +559,39 @@ class DataSetScrape:
         df_new = pd.concat([df,self.durga_puja()])
 
         df_new.to_csv('data.csv')
-        print('desserts_finish')
+        print('durga_puja_finish')
+
+    def data_breakfast_build(self):
+        df = pd.read_csv('data.csv')
+        df_new = pd.concat([df, self.breakfast()])
+
+        df_new.to_csv('data.csv')
+        print('breakfast_finish')
+
+    def data_dinner_build(self):
+        df = pd.read_csv('data.csv')
+        df_new = pd.concat([df, self.dinner()])
+
+        df_new.to_csv('data.csv')
+        print('dinner_finish')
+
+    def data_kids_build(self):
+        df = pd.read_csv('data.csv')
+        df_new = pd.concat([df, self.kids()])
+
+        df_new.to_csv('data.csv')
+        print('kids_finish')
+
+    def dataset_build_all(self):
+        self.basic_data_build()
+        self.data_vegetarian_build()
+        self.data_chicken_build()
+        self.data_meat_build()
+        self.data_seafood_build()
+        self.data_rice_build()
+        self.data_bread_build()
+        self.data_desserts_build()
+        self.data_durga_puja_build()
+        self.data_breakfast_build()
+        self.data_dinner_build()
+        self.data_kids_build()

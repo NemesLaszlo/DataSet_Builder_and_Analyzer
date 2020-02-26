@@ -4,24 +4,16 @@ from dataSetCleanAndPrepare import dataSetBasicAnalyze
 
 
 def main():
-    # dataSet_Builder = DataSetScrape()
-    # start = time.process_time()
-    # print('starting')
+    dataSet_Builder = DataSetScrape()
+    start = time.process_time()
+    print('Starting!')
+    dataSet_Builder.dataset_build_all()
+    print('Time spent in scraping', time.process_time() - start, 'seconds.')
 
-    # dataSet_Builder.basic_data_build()
-    # dataSet_Builder.data_vegetarian_build()
-    # dataSet_Builder.data_chicken_build()
-    # dataSet_Builder.data_meat_build()
-    # dataSet_Builder.data_seafood_build()
-    # dataSet_Builder.data_rice_build()
-    # dataSet_Builder.data_bread_build()
-    # dataSet_Builder.data_desserts_build()
-    #dataSet_Builder.data_durga_puja_build()
-
-    # print('time spent in scraping', time.process_time() - start, 'seconds')
-
+    print("Starting dataSet clean and build ... ")
     base_analyze = dataSetBasicAnalyze()
     base_analyze.dataset_clean_prepare()
+    print("Everything fine!")
 
 
 if __name__ == "__main__":
