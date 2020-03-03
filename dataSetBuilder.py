@@ -499,6 +499,42 @@ class DataSetScrape:
 
         return kids
 
+    def beverage(self):
+        url = 'https://food.ndtv.com/recipes/beverages-recipes'
+
+        data = requests.get(url)
+
+        soup = BeautifulSoup(data.content, 'html.parser')
+
+        s = soup.findAll('img', {'class': 'lazy'})
+
+        l = []
+
+        for i in s:
+            i = str(i)
+            t = i.split('title')
+            name = t[-1].split('width')[0]
+            name = name[2:-8]
+            l.append(name)
+        nl = l[-21:]
+        ll = []
+        for i in nl:
+            ll.append(i[:-6])
+
+        l = l[:-21] + ll
+
+        beverage = pd.DataFrame(columns=['Name', 'sub_catagory', 'description'])
+
+        beverage['Name'] = l
+
+        catagory = ['beverage' for i in range(len(l))]
+
+        beverage['sub_catagory'] = catagory
+
+        beverage['description'] = self.description(url)
+
+        return beverage
+
     def basic_data_build(self):
         df = pd.concat([self.healthy(), self.snacks()], ignore_index=True)
 
@@ -582,6 +618,13 @@ class DataSetScrape:
         df_new.to_csv('data.csv')
         print('kids_finish')
 
+    def data_beverage_build(self):
+        df = pd.read_csv('data.csv')
+        df_new = pd.concat([df, self.beverage()])
+
+        df_new.to_csv('data.csv')
+        print('beverage_finish')
+
     def dataset_build_all(self):
         self.basic_data_build()
         self.data_vegetarian_build()
@@ -595,3 +638,4 @@ class DataSetScrape:
         self.data_breakfast_build()
         self.data_dinner_build()
         self.data_kids_build()
+        self.data_beverage_build()
