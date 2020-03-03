@@ -40,7 +40,7 @@ class dataSetBasicAnalyze:
                     vg_nv.append('veg')
 
         self.df['Veg_Non'] = vg_nv
-        print(self.df.Veg_Non.value_counts())
+        # print(self.df.Veg_Non.value_counts())
 
     def add_review_column(self):
         review = []
@@ -363,7 +363,7 @@ class dataSetBasicAnalyze:
             if self.df.loc[i, 'sub_catagory'] == 'durga puja' and self.df.loc[i, 'Nutrient'] == 'none':
                 self.df.loc[i, 'Nutrient'] = 'Protien Carbohydrates'
 
-    def fill_nan_values(self):
+    def fill_nan_values_from_names(self):
         l = ['Cookie', 'Cookies', 'cookie', 'cookies']
         l1 = ['Paneer', 'paneer']
         l2 = ['Salad', 'salad']
@@ -371,6 +371,10 @@ class dataSetBasicAnalyze:
         l4 = ['milk', 'Milk']
         l5 = ['soup', 'Soup']
         l6 = ['Cake', 'cake']
+        l7 = ['margarita', 'Margarita']
+        l8 = ['Tea', 'tea', 'chai', 'Chai']
+        l9 = ['ESPRESSO', 'CAPPUCCINO', 'CAFÉ LATTE', 'MACCHIATO', 'AMERICANO', 'DECAFFEINATED', 'Coffee', 'CAFÉ LATTE']
+        l10 = ['Wine', 'wine']
 
         more = ['chicken', 'almond', 'chocolate', 'kheer', 'cake', 'curry', 'rice', 'biryani', 'halwa', 'fish', 'aloo',
              'mutton',
@@ -410,48 +414,26 @@ class dataSetBasicAnalyze:
             for j in s:
                 if j in l:
                     self.df.loc[i, 'catagory'] = 'cookie'
-
-        for i in range(self.df.shape[0]):
-
-            s = self.df.loc[i, 'Name'].split()
-            for j in s:
-                if j in l1:
+                elif j in l1:
                     self.df.loc[i, 'catagory'] = 'paneer'
-
-        for i in range(self.df.shape[0]):
-
-            s = self.df.loc[i, 'Name'].split()
-            for j in s:
-                if j in l2:
+                elif j in l2:
                     self.df.loc[i, 'catagory'] = 'salad'
-
-        for i in range(self.df.shape[0]):
-
-            s = self.df.loc[i, 'Name'].split()
-            for j in s:
-                if j in l3:
+                elif j in l3:
                     self.df.loc[i, 'catagory'] = 'thandai'
-
-        for i in range(self.df.shape[0]):
-
-            s = self.df.loc[i, 'Name'].split()
-            for j in s:
-                if j in l4:
+                elif j in l4:
                     self.df.loc[i, 'catagory'] = 'milk'
-
-        for i in range(self.df.shape[0]):
-
-            s = self.df.loc[i, 'Name'].split()
-            for j in s:
-                if j in l5:
+                elif j in l5:
                     self.df.loc[i, 'catagory'] = 'soup'
-
-        for i in range(self.df.shape[0]):
-
-            s = self.df.loc[i, 'Name'].split()
-            for j in s:
-                if j in l6:
+                elif j in l6:
                     self.df.loc[i, 'catagory'] = 'cake'
+                elif j in l7:
+                    self.df.loc[i, 'catagory'] = 'margarita'
+                elif j in l8:
+                    self.df.loc[i, 'catagory'] = 'tea'
+                elif j in l9:
+                    self.df.loc[i, 'catagory'] = 'coffee'
+                if j in l10:
+                    self.df.loc[i, 'catagory'] = 'wine'
 
         for i in range(self.df.shape[0]):
 
@@ -461,7 +443,7 @@ class dataSetBasicAnalyze:
                     if j.lower() in more:
                         self.df.loc[i, 'catagory'] = j
 
-    def fill_nans_from_description(self):
+    def fill_nan_values_from_description_and_names(self):
         l = ['broccoli', 'shorba', 'gluten', 'scotch', 'lentil', 'kahwa', 'kiwi', 'oats', 'wings', 'momos',
 
              'gajak', 'salmon', 'appam', 'basil', 'pithe', 'warm', 'kinnu', 'punch', 'spanish', 'milk', 'fresh',
@@ -495,6 +477,7 @@ class dataSetBasicAnalyze:
              'pakode', 'kele', 'thepla', 'bonda', 'singhare', 'jalapeno', 'makki', 'chole', 'daal', 'pani', 'keerai',
 
              'vadi', 'basundi', 'dhokli', 'dhokla', 'pohe', 'papdi', 'ras']
+
         for i in range(self.df.shape[0]):
 
             if str(self.df.loc[i, 'catagory']) == 'nan':
@@ -504,8 +487,28 @@ class dataSetBasicAnalyze:
                         if j.lower() in l:
                             self.df.loc[i, 'catagory'] = j
 
+        for i in range(self.df.shape[0]):
+
+            if str(self.df.loc[i, 'catagory']) == 'nan':
+                s = self.df.loc[i, 'Name'].split()
+                for j in s:
+                    if j.lower() in l:
+                        self.df.loc[i, 'catagory'] = j
+
+    def finalize(self):
+        self.df['catagory'].fillna(value='not catagorized', inplace=True)
+        self.df['description'].fillna(value='Key Ingredients: empty', inplace=True)
+        self.df = self.df.fillna(method='ffill')
+        print('Before drop one live with Nan: ')
+        print(self.df.isnull().sum())
+        self.df = self.df.dropna()
+
     def save(self):
+        self.finalize()
         self.df.to_csv('dataset.csv')
+        print('-----------------------------------')
+        print(self.df.isnull().sum())
+        print(self.df.info())
 
     def dataset_clean_prepare(self):
         self.base_clean()
@@ -514,6 +517,6 @@ class dataSetBasicAnalyze:
         self.add_price_column()
         self.add_nutrient_column()
         self.data_fill()
-        self.fill_nan_values()
-        self.fill_nans_from_description()
+        self.fill_nan_values_from_names()
+        self.fill_nan_values_from_description_and_names()
         self.save()
