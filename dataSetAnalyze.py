@@ -4,13 +4,17 @@ import pandas as pd
 from matplotlib import style
 from sklearn.cluster import KMeans
 from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 style.use('ggplot')
+
 
 class dataAnalyzer:
 
     def __init__(self):
         self.df = pd.read_csv("dataset.csv")
         self.numerical_dataset = self.handle_non_numerical_data(self.df)
+        self.numpy_array_dataset = self.numerical_dataset.to_numpy()
 
     # Non-Numeric columns convert to numeric values
     def handle_non_numerical_data(self, dataset):
@@ -35,8 +39,8 @@ class dataAnalyzer:
 
         return dataset
 
-    def column_Veg_Non_kmeans(self):
-        X = np.array(self.numerical_dataset.drop(['Veg_Non'], 1).astype(float))
+    def veg_non_column_kmeans(self):
+        X = np.array(self.numerical_dataset.drop(['Veg_Non', 'Review', 'Price'], 1).astype(float))
         X = preprocessing.scale(X)
         Y = np.array(self.numerical_dataset['Veg_Non'])
 
@@ -51,6 +55,30 @@ class dataAnalyzer:
             if prediction[0] == Y[i]:
                 correct += 1
 
-        accuracy = (correct / len(X)) * 100 # accuracy
+        accuracy = (correct / len(X)) * 100  # accuracy
         return round(accuracy, 2)
 
+    def sub_catagory_classification(self):
+        numpy_datas_list_in_list = self.numpy_array_dataset.T
+
+        catagory = numpy_datas_list_in_list[4]
+        nutrient = numpy_datas_list_in_list[8]
+
+        catagory_label = self.numerical_dataset.keys()[4]
+        nutrient_label = self.numerical_dataset.keys()[8]
+
+        plt.scatter(nutrient, catagory, c=np.array(self.numerical_dataset['sub_catagory']))
+        plt.xlabel(nutrient_label)
+        plt.ylabel(catagory_label)
+
+        plt.show()
+
+    def sub_catagory_k_neighbors_classifier(self):
+        data_predict_sub_catagory = np.array(self.numerical_dataset['sub_catagory'])
+        data_without_sub_catagory = np.array(self.numerical_dataset.drop(['sub_catagory', 'Name', 'Price', 'description', 'Review'], 1).astype(float))
+
+        x_train, x_test, y_train, y_test = train_test_split(data_without_sub_catagory, data_predict_sub_catagory, random_state=0)
+        knn = KNeighborsClassifier(n_neighbors=1)
+
+        knn.fit(x_train, y_train)
+        return round(knn.score(x_test, y_test), 2)
