@@ -26,9 +26,16 @@ def main():
     else:
         print("dataset.csv exists!")
         analyzer = dataAnalyzer()
+
         kmeans_result = analyzer.column_Veg_Non_kmeans()
         print("KMeans result is {kmeans}".format(kmeans=kmeans_result))
 
+        analyzer.catagory_classification()
+
+        # print(analyzer.numpy_array_dataset.T)
+        # print(analyzer.numerical_dataset.keys())
+        # print(analyzer.numerical_dataset['catagory'])
+        # print(analyzer.numerical_dataset['sub_catagory'])
 
 if __name__ == "__main__":
     main()

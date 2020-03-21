@@ -6,11 +6,13 @@ from sklearn.cluster import KMeans
 from sklearn import preprocessing
 style.use('ggplot')
 
+
 class dataAnalyzer:
 
     def __init__(self):
         self.df = pd.read_csv("dataset.csv")
         self.numerical_dataset = self.handle_non_numerical_data(self.df)
+        self.numpy_array_dataset = self.numerical_dataset.to_numpy()
 
     # Non-Numeric columns convert to numeric values
     def handle_non_numerical_data(self, dataset):
@@ -51,6 +53,23 @@ class dataAnalyzer:
             if prediction[0] == Y[i]:
                 correct += 1
 
-        accuracy = (correct / len(X)) * 100 # accuracy
+        accuracy = (correct / len(X)) * 100  # accuracy
         return round(accuracy, 2)
 
+    def catagory_classification(self):
+        numpy_datas_list_in_list = self.numpy_array_dataset.T
+
+        sub_catagory = numpy_datas_list_in_list[2]
+        nutrient = numpy_datas_list_in_list[8]
+
+        sub_catagory_label = self.numerical_dataset.keys()[2]
+        nutrient_label = self.numerical_dataset.keys()[8]
+
+        plt.scatter(nutrient, sub_catagory, c=self.numerical_dataset['catagory'])
+        plt.xlabel(nutrient_label)
+        plt.ylabel(sub_catagory_label)
+
+        plt.show()
+
+    def k_neighbors_classifier(self):
+        pass
