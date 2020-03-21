@@ -21,21 +21,20 @@ def main():
         print("Everything fine!")
 
         analyzer = dataAnalyzer()
-        kmeans_result = analyzer.column_Veg_Non_kmeans()
+        kmeans_result = analyzer.veg_non_column_kmeans()
         print("KMeans result is {kmeans}.".format(kmeans=kmeans_result))
     else:
         print("dataset.csv exists!")
         analyzer = dataAnalyzer()
 
-        kmeans_result = analyzer.column_Veg_Non_kmeans()
+        kmeans_result = analyzer.veg_non_column_kmeans()
         print("KMeans result is {kmeans}".format(kmeans=kmeans_result))
 
-        analyzer.catagory_classification()
+        knn_result = analyzer.sub_catagory_k_neighbors_classifier()
+        print("KNeighborsClassifier result is {knn}".format(knn=knn_result))
 
-        # print(analyzer.numpy_array_dataset.T)
-        # print(analyzer.numerical_dataset.keys())
-        # print(analyzer.numerical_dataset['catagory'])
-        # print(analyzer.numerical_dataset['sub_catagory'])
+        analyzer.sub_catagory_classification()
+
 
 if __name__ == "__main__":
     main()
