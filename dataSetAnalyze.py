@@ -6,6 +6,7 @@ from sklearn.cluster import KMeans
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+
 style.use('ggplot')
 
 
@@ -13,6 +14,7 @@ class dataAnalyzer:
 
     def __init__(self):
         self.df = pd.read_csv("dataset.csv")
+        self.df_string = pd.read_csv("dataset.csv")
         self.numerical_dataset = self.handle_non_numerical_data(self.df)
         self.numpy_array_dataset = self.numerical_dataset.to_numpy()
 
@@ -68,6 +70,7 @@ class dataAnalyzer:
         nutrient_label = self.numerical_dataset.keys()[8]
 
         plt.scatter(nutrient, catagory, c=np.array(self.numerical_dataset['sub_catagory']))
+        plt.title('sub_catagory classification visualization')
         plt.xlabel(nutrient_label)
         plt.ylabel(catagory_label)
 
@@ -75,10 +78,41 @@ class dataAnalyzer:
 
     def sub_catagory_k_neighbors_classifier(self):
         data_predict_sub_catagory = np.array(self.numerical_dataset['sub_catagory'])
-        data_without_sub_catagory = np.array(self.numerical_dataset.drop(['sub_catagory', 'Name', 'Price', 'description', 'Review'], 1).astype(float))
+        data_without_sub_catagory = np.array(
+            self.numerical_dataset.drop(['sub_catagory', 'Name', 'Price', 'description', 'Review'], 1).astype(float))
 
-        x_train, x_test, y_train, y_test = train_test_split(data_without_sub_catagory, data_predict_sub_catagory, random_state=0)
+        x_train, x_test, y_train, y_test = train_test_split(data_without_sub_catagory, data_predict_sub_catagory,
+                                                            random_state=0)
         knn = KNeighborsClassifier(n_neighbors=1)
 
         knn.fit(x_train, y_train)
         return round(knn.score(x_test, y_test), 2)
+
+    def most_reviewed_recepites(self):
+        keys = [cat for cat, df in self.df_string.groupby(['catagory'])]
+
+        plt.bar(keys, self.df_string.groupby(['catagory']).sum()['Review'])
+        plt.ylabel('Review')
+        plt.xlabel('Catagory')
+        plt.xticks(keys, rotation='vertical', size=4)
+
+        plt.show()
+
+    def catagory_price_review_plots(self):
+        catagory_group = self.df_string.groupby('catagory')
+        reviews_sum = catagory_group.sum()['Review']
+        keys = [pair for pair, df in catagory_group]
+        prices = self.df_string.groupby('catagory').mean()['Price']
+
+        fig, ax1 = plt.subplots()
+
+        ax2 = ax1.twinx()
+        ax1.bar(keys, reviews_sum, color='g')
+        ax2.plot(keys, prices, color='b')
+
+        ax1.set_xlabel('Catagory')
+        ax1.set_ylabel('Reviews', color='g')
+        ax2.set_ylabel('Price ($)', color='b')
+        ax1.set_xticklabels(keys, rotation='vertical', size=4)
+
+        plt.show()
