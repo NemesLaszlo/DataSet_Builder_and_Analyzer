@@ -23,6 +23,13 @@ def main():
         analyzer = dataAnalyzer()
         kmeans_result = analyzer.veg_non_column_kmeans()
         print("KMeans result is {kmeans}.".format(kmeans=kmeans_result))
+
+        knn_result = analyzer.sub_catagory_k_neighbors_classifier()
+        print("KNeighborsClassifier result is {knn}".format(knn=knn_result))
+
+        analyzer.catagory_price_review_plots()
+
+        analyzer.sub_catagory_classification()
     else:
         print("dataset.csv exists!")
         analyzer = dataAnalyzer()
@@ -32,6 +39,10 @@ def main():
 
         knn_result = analyzer.sub_catagory_k_neighbors_classifier()
         print("KNeighborsClassifier result is {knn}".format(knn=knn_result))
+
+        analyzer.most_reviewed_recepites()
+
+        analyzer.catagory_price_review_plots()
 
         analyzer.sub_catagory_classification()
 
