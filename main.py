@@ -27,6 +27,8 @@ def main():
         knn_result = analyzer.sub_catagory_k_neighbors_classifier()
         print("KNeighborsClassifier result is {knn}".format(knn=knn_result))
 
+        analyzer.most_reviewed_recepites()
+
         analyzer.catagory_price_review_plots()
 
         analyzer.sub_catagory_classification()
